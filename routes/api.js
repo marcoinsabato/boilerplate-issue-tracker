@@ -1,6 +1,6 @@
 'use strict';
-const Issue = require('../types/issue.js')
-;
+const Issue = require('../types/issue.js');
+
 module.exports = function (app) {
 
   app.route('/api/issues/:project')
@@ -11,12 +11,18 @@ module.exports = function (app) {
     })
     
     .post(function (req, res){
-      let project = req.params.project;
+      let response;
+      let statusCode = 200;
 
-      let issue = new Issue(req.body);
+      try {
+        response = new Issue(req.body);
+      } catch (e) {
+        response = {error : e.message};
+        statusCode = 400;
+      }
 
-      return res.send(issue);
-      
+
+      return res.status(statusCode).send(response);
     })
     
     .put(function (req, res){
