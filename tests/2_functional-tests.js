@@ -46,11 +46,11 @@ suite('Functional Tests', function() {
                 assert.equal(res.body.issue_title, "title test");
                 assert.equal(res.body.issue_text, "text test");
                 assert.equal(res.body.created_by, "user test");
-                assert.isUndefined(res.body.assigned_to);
+                assert.equal(res.body.assigned_to , '');
                 assert.isDefined(res.body.created_on);
                 assert.isDefined(res.body.updated_on);
                 assert.equal(res.body.open, true);
-                assert.isUndefined(res.body.status_text);
+                assert.equal(res.body.status_text , '');
                 done();
             });
     })
