@@ -33,9 +33,9 @@ class Issue {
         this.created_on = props?.created_on ?? new Date().toISOString();
         this.updated_on = props?.updated_on ?? new Date().toISOString();
         this.created_by = props.created_by;
-        this.assigned_to = props?.assigned_to ?? undefined;
+        this.assigned_to = props?.assigned_to ?? '';
         this.open = props?.open ?? true;
-        this.status_text = props?.status_text ?? undefined;
+        this.status_text = props?.status_text ?? '';
     }
 }
 

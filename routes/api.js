@@ -103,7 +103,7 @@ module.exports = function (app) {
         });
       }
 
-      return res.send(issues);  
+      return res.json(issues);  
     })
     
     .post(function (req, res){
@@ -118,7 +118,7 @@ module.exports = function (app) {
         response = new Issue(req.body);
       }
 
-      return res.status(statusCode).send(response);
+      return res.status(statusCode).json(response);
     })
     
     .put(function (req, res){
@@ -126,15 +126,15 @@ module.exports = function (app) {
 
       const props = req.body;
       if (!props._id) {
-        return res.status(400).send({error : 'missing _id'});
+        return res.status(400).json({error : 'missing _id'});
       }
       if(Object.keys(props).length === 1) {
-        return res.status(400).send({ error: 'no update field(s) sent', '_id': props._id });
+        return res.status(400).json({ error: 'no update field(s) sent', '_id': props._id });
       }
       const issue = exampleIssues.find(issue => issue._id == props._id);
 
       if (!issue) {
-        return res.status(400).send({ error: 'could not update', '_id': props._id });
+        return res.status(400).json({ error: 'could not update', '_id': props._id });
       }
 
       const updatedIssue = {
@@ -145,7 +145,7 @@ module.exports = function (app) {
 
       const response = {  result: 'successfully updated', '_id': props._id };
 
-      return res.status(200).send(response);
+      return res.status(200).json(response);
       
     })
     
@@ -154,18 +154,18 @@ module.exports = function (app) {
 
       const props = req.body;
       if (!props._id) {
-        return res.status(400).send({error : 'missing _id'});
+        return res.status(400).json({error : 'missing _id'});
       }
 
       const issue = exampleIssues.find(issue => issue._id == props._id);
 
       if (!issue) {
-        return res.status(400).send({ error: 'could not delete', '_id': props._id });
+        return res.status(400).json({ error: 'could not delete', '_id': props._id });
       }
 
       const response = {  result: 'successfully deleted', '_id': props._id };
 
-      return res.status(200).send(response);
+      return res.status(200).json(response);
     });
     
 };
