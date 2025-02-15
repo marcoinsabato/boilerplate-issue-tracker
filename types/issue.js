@@ -27,11 +27,11 @@ class Issue {
         if (!props.issue_title || !props.issue_text || !props.created_by) {
             throw new Error('required field(s) missing');
         }
-        this._id = generateId();
+        this._id = props._id ?? generateId();
         this.issue_title = props.issue_title;
         this.issue_text = props.issue_text;
-        this.created_on = new Date().toISOString();
-        this.updated_on = new Date().toISOString();
+        this.created_on = props?.created_on ?? new Date().toISOString();
+        this.updated_on = props?.updated_on ?? new Date().toISOString();
         this.created_by = props.created_by;
         this.assigned_to = props?.assigned_to ?? undefined;
         this.open = props?.open ?? true;

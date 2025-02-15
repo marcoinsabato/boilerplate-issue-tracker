@@ -77,24 +77,168 @@ suite('Functional Tests', function() {
                 done();
             });
     })
-    // View issues on a project with one filter: GET request to /api/issues/{project}
+    // View issues on a project with one filter: GET request to /api/issues/{project}?open=false
+    test('View issues on a project: GET request to /api/issues/{project}?open=false' , (done) => {
+        const openFilter = true;
+        chai.request(server)
+            .get(`/api/issues/apitest?open=${openFilter}`)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.isDefined(res.body);
+                assert.isArray(res.body);
+                
+                const checkIfAllClosed = res.body.every((issue) => issue.open === openFilter);
+                assert.isTrue(checkIfAllClosed);
+
+                done();
+            });
+    })
     
-    // View issues on a project with multiple filters: GET request to /api/issues/{project}
-    
+    // View issues on a project with multiple filters: GET request to /api/issues/{project}?open=false&assigned_to=Joe
+    test('View issues on a project: GET request to /api/issues/{project}' , (done) => {
+        const openFilter = true;
+        const assignedToFilter = 'Joe';
+
+        chai.request(server)
+            .get(`/api/issues/apitest?open=${openFilter}&assigned_to=${assignedToFilter}`)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.isDefined(res.body);
+                assert.isArray(res.body);
+                
+                const checkIfAllClosed = res.body.every((issue) => issue.open === openFilter);
+                assert.isTrue(checkIfAllClosed);
+
+                const checkIfAllAssignedToJoe = res.body.every((issue) => issue.assigned_to === assignedToFilter);
+                assert.isTrue(checkIfAllAssignedToJoe);
+                done();
+            });
+    })
     // Update one field on an issue: PUT request to /api/issues/{project}
-    
+    test('Update one field on an issue: PUT request to /api/issues/{project}' , (done) => {
+        const _id = '1';
+        const updatedAssignedTo = 'Joe';
+
+        chai.request(server)
+            .put(`/api/issues/apitest`)
+            .send({
+                _id,
+                assigned_to: updatedAssignedTo
+            })
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.isDefined(res.body);
+                assert.equal(res.body._id, _id);
+                assert.equal(res.body.result, 'successfully updated');
+                done();
+            });
+    })
     // Update multiple fields on an issue: PUT request to /api/issues/{project}
-    
+    test('Update multiple fields on an issue: PUT request to /api/issues/{project}' , (done) => {
+        const _id = '1';
+        const updatedAssignedTo = 'Joe';
+        const issueText = 'Test';
+
+        chai.request(server)
+            .put(`/api/issues/apitest`)
+            .send({
+                _id,
+                assigned_to: updatedAssignedTo,
+                issue_text: issueText
+            })
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.isDefined(res.body);
+                assert.equal(res.body._id, _id);
+                assert.equal(res.body.result, 'successfully updated');
+                done();
+            });
+    })    
     // Update an issue with missing _id: PUT request to /api/issues/{project}
+    test('Update an issue with missing _id: PUT request to /api/issues/{project}' , (done) => {
+        chai.request(server)
+            .put(`/api/issues/apitest`)
+            .send({})
+            .end((err, res) => {
+                assert.equal(res.status, 400);
+                assert.isDefined(res.body);
+                assert.equal(res.body.error, 'missing _id');
+                done();
+            });
+    })
     
     // Update an issue with no fields to update: PUT request to /api/issues/{project}
+    test('Update an issue with no fields to update: PUT request to /api/issues/{project}' , (done) => {
+        const _id = '1';
+
+        chai.request(server)
+            .put(`/api/issues/apitest`)
+            .send({_id})
+            .end((err, res) => {
+                assert.equal(res.status, 400);
+                assert.isDefined(res.body);
+                assert.equal(res.body.error, 'no update field(s) sent');
+                done();
+            });
+    })
     
     // Update an issue with an invalid _id: PUT request to /api/issues/{project}
-    
+    test('Update an issue with an invalid _id: PUT request to /api/issues/{project}' , (done) => {
+        const _id = 'x';
+        const updatedAssignedTo = 'Joe';
+
+        chai.request(server)
+            .put(`/api/issues/apitest`)
+            .send({
+                _id,
+                assigned_to: updatedAssignedTo,
+            })
+            .end((err, res) => {
+                assert.equal(res.status, 400);
+                assert.isDefined(res.body);
+                assert.equal(res.body.error, 'could not update');
+                done();
+            });
+    })
     // Delete an issue: DELETE request to /api/issues/{project}
-    
+    test('Delete an issue: DELETE request to /api/issues/{project}' , (done) => {
+        const _id = '1';
+
+        chai.request(server)
+            .delete(`/api/issues/apitest`)
+            .send({_id})
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.isDefined(res.body);
+                assert.equal(res.body.result, 'successfully deleted');
+                done();
+            });
+    })
     // Delete an issue with an invalid _id: DELETE request to /api/issues/{project}
-    
+    test('Delete an issue with an invalid _id: DELETE request to /api/issues/{project}' , (done) => {
+        const _id = 'x';
+
+        chai.request(server)
+            .delete(`/api/issues/apitest`)
+            .send({_id})
+            .end((err, res) => {
+                assert.equal(res.status, 400);
+                assert.isDefined(res.body);
+                assert.equal(res.body.error, 'could not delete');
+                done();
+            });
+    })
     // Delete an issue with missing _id: DELETE request to /api/issues/{project}
+    test('Delete an issue with missing _id: DELETE request to /api/issues/{project}' , (done) => {
+        chai.request(server)
+            .delete(`/api/issues/apitest`)
+            .send({})
+            .end((err, res) => {
+                assert.equal(res.status, 400);
+                assert.isDefined(res.body);
+                assert.equal(res.body.error, 'missing _id');
+                done();
+            });
+    })
 
 });
