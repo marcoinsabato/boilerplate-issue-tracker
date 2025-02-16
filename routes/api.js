@@ -39,7 +39,7 @@ module.exports = function (app) {
         const issues = await Issue.find({ ...query, project: project._id }).populate('project', 'name');
         res.json(issues);
       } catch (err) {
-        res.status(500).json({ error: 'Error fetching issues' });
+        res.json({ error: 'Error fetching issues' });
       }
     })
     
@@ -57,9 +57,9 @@ module.exports = function (app) {
         res.json(savedIssue);
       } catch (err) {
         if (err.name === 'ValidationError') {
-          res.status(400).json({ error: 'required field(s) missing' });
+          res.json({ error: 'required field(s) missing' });
         } else {
-          res.status(500).json({ error: 'Error saving issue' });
+          res.json({ error: 'Error saving issue' });
         }
       }
     })
@@ -72,10 +72,10 @@ module.exports = function (app) {
         const { _id, ...updateData } = req.body;
         
         if (!_id) {
-          return res.status(400).json({ error: 'missing _id' });
+          return res.json({ error: 'missing _id' });
         }
         if (Object.keys(updateData).length === 0) {
-          return res.status(400).json({ error: 'no update field(s) sent', '_id': _id });
+          return res.json({ error: 'no update field(s) sent', '_id': _id });
         }
         
         const updatedIssue = await Issue.findOneAndUpdate(
@@ -85,11 +85,11 @@ module.exports = function (app) {
         );
         
         if (!updatedIssue) {
-          return res.status(400).json({ error: 'could not update', '_id': _id });
+          return res.json({ error: 'could not update', '_id': _id });
         }
         res.json({ result: 'successfully updated', '_id': _id });
       } catch (err) {
-        res.status(400).json({ error: 'could not update', '_id': req.body._id });
+        res.json({ error: 'could not update', '_id': req.body._id });
       }
     })
     
@@ -101,16 +101,16 @@ module.exports = function (app) {
         const { _id } = req.body;
         
         if (!_id) {
-          return res.status(400).json({ error: 'missing _id' });
+          return res.json({ error: 'missing _id' });
         }
         
         const deletedIssue = await Issue.findOneAndDelete({ _id: _id, project: project._id });
         if (!deletedIssue) {
-          return res.status(400).json({ error: 'could not delete', '_id': _id });
+          return res.json({ error: 'could not delete', '_id': _id });
         }
         res.json({ result: 'successfully deleted', '_id': _id });
       } catch (err) {
-        res.status(400).json({ error: 'could not delete', '_id': req.body._id });
+        res.json({ error: 'could not delete', '_id': req.body._id });
       }
     });
     
