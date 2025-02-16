@@ -6,6 +6,7 @@ const server = require('../server');
 chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
+    let createdIssueId = undefined;
     // Create an issue with every field: POST request to /api/issues/{project}
     test('Create an issue with every field: POST request to /api/issues/{project}' , (done) => {
         chai.request(server)
@@ -20,6 +21,7 @@ suite('Functional Tests', function() {
             .end((err, res) => {
                 assert.equal(res.status, 200);
                 assert.isDefined(res.body._id);
+                createdIssueId = res.body._id;
                 assert.equal(res.body.issue_title, "title test");
                 assert.equal(res.body.issue_text, "text test");
                 assert.equal(res.body.created_by, "user test");
@@ -78,7 +80,7 @@ suite('Functional Tests', function() {
             });
     })
     // View issues on a project with one filter: GET request to /api/issues/{project}?open=false
-    test('View issues on a project: GET request to /api/issues/{project}?open=false' , (done) => {
+    test('View issues on a project: GET request to /api/issues/{project}?open=true' , (done) => {
         const openFilter = true;
         chai.request(server)
             .get(`/api/issues/apitest?open=${openFilter}`)
@@ -116,7 +118,7 @@ suite('Functional Tests', function() {
     })
     // Update one field on an issue: PUT request to /api/issues/{project}
     test('Update one field on an issue: PUT request to /api/issues/{project}' , (done) => {
-        const _id = '1';
+        const _id = createdIssueId;
         const updatedAssignedTo = 'Joe';
 
         chai.request(server)
@@ -135,7 +137,7 @@ suite('Functional Tests', function() {
     })
     // Update multiple fields on an issue: PUT request to /api/issues/{project}
     test('Update multiple fields on an issue: PUT request to /api/issues/{project}' , (done) => {
-        const _id = '1';
+        const _id = createdIssueId;
         const updatedAssignedTo = 'Joe';
         const issueText = 'Test';
 
@@ -169,7 +171,7 @@ suite('Functional Tests', function() {
     
     // Update an issue with no fields to update: PUT request to /api/issues/{project}
     test('Update an issue with no fields to update: PUT request to /api/issues/{project}' , (done) => {
-        const _id = '1';
+        const _id = createdIssueId;
 
         chai.request(server)
             .put(`/api/issues/apitest`)
@@ -202,7 +204,7 @@ suite('Functional Tests', function() {
     })
     // Delete an issue: DELETE request to /api/issues/{project}
     test('Delete an issue: DELETE request to /api/issues/{project}' , (done) => {
-        const _id = '1';
+        const _id = createdIssueId;
 
         chai.request(server)
             .delete(`/api/issues/apitest`)
